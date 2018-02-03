@@ -11,6 +11,7 @@ public class Robot extends IterativeRobot {
 
     public double intakeSpeed;
     public double outputSpeed;
+    public double elevatorSpeed;
 
     public XboxController xboxDrive;
 
@@ -20,15 +21,21 @@ public class Robot extends IterativeRobot {
     public static TalonSRX outputLeft = new TalonSRX(Constants.PORT_OUTPUT_LEFT);
     public static TalonSRX outputRight = new TalonSRX(Constants.PORT_OUTPUT_RIGHT);
 
+    public static TalonSRX elevatorLeft = new TalonSRX(Constants.PORT_MOTOR_DRIVE_ELEVATOR_MAIN);
+    public static TalonSRX elevatorRight = new TalonSRX(Constants.PORT_MOTOR_DRIVE_ELEVATOR_2);
+
     @Override
     public void robotInit() {
         xboxDrive = new XboxController(Constants.PORT_XBOX_DRIVE);
         intakeSpeed = 0.0;
         outputSpeed = 0.0;
+        elevatorSpeed = 0.0;
         SmartDashboard.putNumber("Intake Speed", 0.0);
         SmartDashboard.putNumber("Output Speed", 0.0);
+        SmartDashboard.putNumber("Elevator Speed", 0.0);
         intakeRight.follow(intakeLeft);
         outputRight.follow(outputLeft);
+        elevatorRight.follow(elevatorLeft);
     }
 
     @Override
@@ -53,6 +60,8 @@ public class Robot extends IterativeRobot {
 
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", 0.0);
         outputSpeed = SmartDashboard.getNumber("Output Speed", 0.0);
+        elevatorSpeed = SmartDashboard.getNumber("Elevator Speed", 0.0);
+
 
         //Remote
 
@@ -61,6 +70,12 @@ public class Robot extends IterativeRobot {
         intakeLeft.set(ControlMode.PercentOutput, intakeSpeed);
       //  intakeRight.set(ControlMode.PercentOutput, intakeSpeed);
         outputLeft.set(ControlMode.PercentOutput, outputSpeed);
+        elevatorLeft.set(ControlMode.PercentOutput, elevatorSpeed);
+
+
+
+
+
 
     }
 
