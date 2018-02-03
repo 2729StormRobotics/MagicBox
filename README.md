@@ -2,6 +2,8 @@
 
 Development code for the Magic Box
 
+[![Build Status](https://travis-ci.org/2729StormRobotics/MagicBox.svg?branch=master)](https://travis-ci.org/2729StormRobotics/MagicBox)
+
 ## Cloning
 
 This repository only contains the source code and relevant java packages.  Everything else must be built using gradle according to the following commands:
