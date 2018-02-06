@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import robot.subsystems.PDP;
 
 public class Robot extends IterativeRobot {
 
@@ -50,12 +51,13 @@ public class Robot extends IterativeRobot {
 
 
     @Override
-    public void disabledPeriodic() { }
+    public void disabledPeriodic() {
+        PDP.dashboardStats();
+    }
 
 
     @Override
     public void teleopPeriodic() {
-
         //Smart Dashboard
 
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", 0.0);
@@ -67,18 +69,20 @@ public class Robot extends IterativeRobot {
 
         //intakeSpeed = xboxDrive.getTriggerAxis(XboxController.Hand.kRight);
 
-        intakeLeft.set(ControlMode.PercentOutput, intakeSpeed);
+        //intakeLeft.set(ControlMode.PercentOutput, intakeSpeed);
       //  intakeRight.set(ControlMode.PercentOutput, intakeSpeed);
-        outputLeft.set(ControlMode.PercentOutput, outputSpeed);
+        //outputLeft.set(ControlMode.PercentOutput, outputSpeed);
         elevatorLeft.set(ControlMode.PercentOutput, elevatorSpeed);
 
 
 
 
 
-
+        PDP.dashboardStats();
     }
 
     @Override
-    public void testPeriodic() { }
+    public void testPeriodic() {
+        PDP.dashboardStats();
+    }
 }
