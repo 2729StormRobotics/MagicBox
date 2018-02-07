@@ -18,7 +18,6 @@ jdk:
   - oraclejdk8
 
 script:
-  - git fetch --unshallow
   - ./gradlew build
   - ./gradlew sonarqube
 
