@@ -36,6 +36,9 @@ namespace MagicBox
         // Assign PCM to its CAN bus port.
         static PneumaticControlModule PCM = new PneumaticControlModule(0);
 
+        // Assign PDP to its CAN bus port.
+        static PowerDistributionPanel PDP = new PowerDistributionPanel(0);
+
         // Assign digital inputs to solenoid toggles.  These will fire pistons as needed.
         static InputPort pistonToggle1 = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.Disabled);
         static InputPort pistonToggle2 = new InputPort(CTRE.HERO.IO.Port5.Pin5, false, Port.ResistorMode.Disabled);
@@ -176,6 +179,11 @@ namespace MagicBox
                 PCM.SetSolenoidOutput(6, !solenoidState6);  // Invert the state of solenoid 6
                 PCM.SetSolenoidOutput(7, solenoidState6);  // Invert the state of solenoid 7
             }
+        }
+
+        static void Display()
+        {
+            float motorCurrent1 = PDP.GetChannelCurrent(0);
         }
     }
 }
