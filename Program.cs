@@ -13,11 +13,17 @@ namespace MagicBox
 {
     public class Program
     {
-        // Assign motors to talons. They will be numbered and labeled according to PDP port.
-        static TalonSRX motor1 = new TalonSRX(1);
-        static TalonSRX motor2 = new TalonSRX(2);
-        static TalonSRX motor3 = new TalonSRX(3);
-        static TalonSRX motor4 = new TalonSRX(4);
+        // Define motor ports on PDP.
+        static int motorPort1 = 0;
+        static int motorPort2 = 1;
+        static int motorPort3 = 2;
+        static int motorPort4 = 3;
+        
+        // Assign motors to talons.
+        static TalonSRX motor1 = new TalonSRX(motorPort1);
+        static TalonSRX motor2 = new TalonSRX(motorPort2);
+        static TalonSRX motor3 = new TalonSRX(motorPort3);
+        static TalonSRX motor4 = new TalonSRX(motorPort4);
 
         // Assign analog inputs to potentiometers used to control motors. Numbers correspond to motors.
         static AnalogInput motorControl1 = new AnalogInput(CTRE.HERO.IO.Port1.Analog_Pin3);
@@ -183,7 +189,17 @@ namespace MagicBox
 
         static void Display()
         {
-            float motorCurrent1 = PDP.GetChannelCurrent(0);
+            // Measure current current draw on each motor channel.
+            float motorCurrent1 = PDP.GetChannelCurrent(motorPort1);
+            float motorCurrent2 = PDP.GetChannelCurrent(motorPort2);
+            float motorCurrent3 = PDP.GetChannelCurrent(motorPort3);
+            float motorCurrent4 = PDP.GetChannelCurrent(motorPort4);
+
+            // Measure power percentage for each motor.
+            float motorPower1 = motor1.GetMotorOutputPercent();
+            float motorPower2 = motor2.GetMotorOutputPercent();
+            float motorPower3 = motor3.GetMotorOutputPercent();
+            float motorPower4 = motor4.GetMotorOutputPercent();
         }
     }
 }
