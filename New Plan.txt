@@ -1,0 +1,30 @@
+Complicated, requires external board if screen used
+- Motors
+  - Drive each = 4 potentiometers (AIN)
+  - Drive direction = 4 switches (GPIO)
+  - Lock pairs = 2 switches (GPIO)
+- Pneumatics
+  - Fire each = 4 switches (GPIO)
+  - Indicate each = 4 LEDS (CPU?)
+- General
+  - Screen (HERO Port 8)
+  - Run = 1 switch (GPIO)
+- Totals
+  - 4 Analog in
+  - 11 Digital in
+  - 4 CPU
+  - 1 Screen
+
+Simple:
+- Motors
+  - Drive 2 pairs = 2 potentiometers (AIN)
+  - Drive direction = 2 switches (GPIO)
+- Pneumatics
+  - Fire each = 4 switches (GPIO)
+- General
+  - Screen (HERO Port 8)
+  - Run = 1 switch (GPIO)
+- Totals
+  - 2 Analog in
+  - 7 Digital in
+  - 1 Screen

@@ -1,0 +1,50 @@
+Requirements:
+- Motors
+  - Drive each = 4 potentiometers (AIN)
+  - Drive direction = 4 switches (GPIO)
+  - Lock pairs = 2 switches (GPIO)
+- Pneumatics
+  - Fire each = 4 switches (GPIO)
+  - Indicate each = 4 LEDS (CPU?)
+- General
+  - Screen (HERO Port 8)
+  - Run = 1 switch (GPIO)
+- Totals
+  - 4 Analog in
+  - 11 Digital in
+  - 4 CPU
+  - 1 Screen
+
+Pinouts:
+- Port 1 - 2 Analog in
+  - Pin 1 = 3.3V - to each potentiometer
+  - Pin 3 = Motor 1 Potentiometer
+  - Pin 4 = Motor 2 Potentiometer
+  - Pin 10 = Ground - to each potentiometer
+- Port 3 - 7 GPIO
+  - Pin 1 = 3.3V - to each switch
+  - Pin 3 = Master Run Switch
+  - Pin 4 = Motor 1 direction switch
+  - Pin 5 = Motor 2 direction switch
+  - Pin 6 = Motor 3 direction switch
+  - Pin 7 = Motor 4 direction switch
+  - Pin 8 = Motors 1-2 lock switch
+  - Pin 9 = Motors 3-4 lock switch
+  - Pin 10 = Ground - to lock switches (for built-in LED, include resistor?)
+- Port 5 - 7 GPIO
+  - Pin 1 = 3.3V - to each switch
+  - Pin 3 = Solenoid 1 Fire
+  - Pin 4 = Solenoid 2 Fire
+  - Pin 5 = Solenoid 3 Fire
+  - Pin 6 = Solenoid 4 Fire
+  - Pin 10 = Ground - to each switch (for built-in LED, include resistor?)
+- Port 8 - 2 Analog in, Display
+  - Pin 1 = 3.3V - to each potentiometer (also display?)
+  - Pin 2 = 5V - to display?
+  - Pin 3 = Motor 3 Potentiometer
+  - Pin 4 = Motor 4 Potentiometer
+  - Pin 6 = Display SS port
+  - Pin 7 = Display MOSI port
+  - Pin 8 = Display MISO port
+  - Pin 9 = Display SCK port
+  - Pin 10 = Ground - to each potentiometer and display

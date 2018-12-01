@@ -11,6 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hero Arcade Drive Example",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hero Analog Input Example", "Hero Analog Input Example\Hero Analog Input Example.csproj", "{888F3D07-D95E-4751-BEFF-AD80307497C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayModule_FuelGauge_Example", "HERO Fuel Gauge Example\DisplayModule_FuelGauge_Example.csproj", "{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayModule_Example", "HERO DisplayModule Example\DisplayModule_Example.csproj", "{454E34B7-14FB-40D8-887A-F094DE4BCFA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom USB Input Test", "Custom USB Input Test\Custom USB Input Test.csproj", "{13CBC09A-1C3A-4D90-A872-352BA3C3397E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analog Input Test", "Analog Input Test\Analog Input Test.csproj", "{A24D424F-148D-4EF8-9176-81B6245CC7EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +49,30 @@ Global
 		{888F3D07-D95E-4751-BEFF-AD80307497C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{888F3D07-D95E-4751-BEFF-AD80307497C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{888F3D07-D95E-4751-BEFF-AD80307497C3}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED4063C-FFCD-4EF5-97CF-29DE6E3EF5AD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454E34B7-14FB-40D8-887A-F094DE4BCFA0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13CBC09A-1C3A-4D90-A872-352BA3C3397E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24D424F-148D-4EF8-9176-81B6245CC7EB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
