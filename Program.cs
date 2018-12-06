@@ -28,19 +28,19 @@ namespace MagicBox
         static TalonSRX motor3 = new TalonSRX(motorPort3);
         static TalonSRX motor4 = new TalonSRX(motorPort4);
 
+        /*
         // Assign analog inputs to potentiometers used to control motors. Numbers correspond to motors.
-        
         static AnalogInput motorControl1 = new AnalogInput(CTRE.HERO.IO.Port1.Analog_Pin3);
         static AnalogInput motorControl2 = new AnalogInput(CTRE.HERO.IO.Port1.Analog_Pin4);
         static AnalogInput motorControl3 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
         static AnalogInput motorControl4 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
-
-        /*
+        */
+        
         static int analogInput1 = 0;
         static int analogInput2 = 0;
         static int analogInput3 = 0;
         static int analogInput4 = 0;
-        */
+        
 
         // Assign gamepad buttons to each function. - Future Update
 
@@ -119,14 +119,20 @@ namespace MagicBox
 
         static void DriveMotors()
         {
-            
+            // Set motor directions from their switches. Switches read true if placed in reverse.
+            motor1.SetInverted(motorDirection1.Read());
+            motor2.SetInverted(motorDirection2.Read());
+            motor3.SetInverted(motorDirection3.Read());
+            motor4.SetInverted(motorDirection4.Read());
+
+            /*
             // Read motor speeds as percentages from potentiometers.
             double motorInput1 = motorControl1.Read();
             double motorInput2 = motorControl2.Read();
             double motorInput3 = motorControl3.Read();
             double motorInput4 = motorControl4.Read();
-            
-            /*
+            */
+
             // Read potentiometers connected to talons as integers from 0 to 1023.
             motor1.GetSensorCollection().GetAnalogIn(out analogInput1);
             motor2.GetSensorCollection().GetAnalogIn(out analogInput2);
@@ -138,7 +144,7 @@ namespace MagicBox
             double motorInput2 = analogInput2 / 1023;
             double motorInput3 = analogInput3 / 1023;
             double motorInput4 = analogInput4 / 1023;
-            */
+            
 
             // Run a 5% deadband to eliminate low-end drift.
             Deadband(ref motorInput1);
