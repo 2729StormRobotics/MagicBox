@@ -8,13 +8,15 @@ using CTRE.Phoenix;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Gadgeteer.Module;
+
 
 namespace MagicBox
 {
     public class Program
     {
-        // Create a blank gamepad object.
-        static CTRE.Phoenix.Controller.GameController _gamepad = null;
+        // Create and attach the gamepad object.
+        static CTRE.Phoenix.Controller.GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
 
         // Define motor ports on PDP.
         static int motorPort1 = 0;
@@ -71,25 +73,35 @@ namespace MagicBox
         static InputPort pistonFire2 = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.Disabled);
         static InputPort pistonFire3 = new InputPort(CTRE.HERO.IO.Port5.Pin5, false, Port.ResistorMode.Disabled);
         static InputPort pistonFire4 = new InputPort(CTRE.HERO.IO.Port5.Pin6, false, Port.ResistorMode.Disabled);
-        
+
+        static DisplayModule _displayModule = new DisplayModule(CTRE.HERO.IO.Port8, DisplayModule.OrientationType.Landscape);
+        static Font _smallFont = Properties.Resources.GetFont(Properties.Resources.FontResources.small);
+        static Font _bigFont = Properties.Resources.GetFont(Properties.Resources.FontResources.NinaB);
+        static DisplayModule.LabelSprite motorLabel1, motorLabel2, motorLabel3, motorLabel4;
+        static DisplayModule.LabelSprite currentLabel1, currentLabel2, currentLabel3, currentLabel4;
+
         public static void Main()
         {
-            while (true)  // Run only while master switch is on.
+            while (true)  // Run forever.
             {
-                bool runSwitch = mainRun.Read();  // Check that the run switch is still active.
-
-                // Check if gamepad is attached.  If so, create it.
-                if (null == _gamepad)
+                // Run when main run switch is active.
+                while (mainRun.Read())
                 {
-                    _gamepad = new GameController(UsbHostDevice.GetInstance());
-                }
-
-                DriveMotors();  // Drive motors according to potentiometer inputs and lock switches.
-                Pneumatics();  // Fire solenoids with buttons
-
-                if (runSwitch && _gamepad != null)
-                {
+                    // Run in gamepad mode if attached. Otherwise, use magicbox mode.
+                    if (_gamepad.GetConnectionStatus() == UsbDeviceConnection.Connected)
+                    {
+                        GamepadMotors();
+                        GamepadPneumatics();
+                    }
+                    else
+                    {
+                        MagicBoxMotors();  // Drive motors according to potentiometer inputs and lock switches.
+                        MagicBoxPneumatics();  // Fire solenoids with buttons
+                    }
+                    
                     CTRE.Phoenix.Watchdog.Feed();
+
+                    Thread.Sleep(20);  // Pause for 20ms.
                 }
 
                 Thread.Sleep(20);  // Pause for 20ms.
@@ -117,7 +129,102 @@ namespace MagicBox
             }
         }
 
-        static void DriveMotors()
+        static int GetFirstButton(GameController gamepad)
+        {
+            for (uint i = 1; i < 16; ++i)
+            {
+                if (gamepad.GetButton(i))
+                    return (int)i;
+            }
+            return -1;
+        }
+
+        static void GamepadMotors()
+        {
+            bool motorInverted1 = motor1.GetInverted();
+            bool motorInverted2 = motor2.GetInverted();
+            bool motorInverted3 = motor3.GetInverted();
+            bool motorInverted4 = motor4.GetInverted();
+
+            // Read button press
+            int idx = GetFirstButton(_gamepad);
+
+            // Check if button pressed is within motor-inverting range. Otherwise, ignore it.
+            if (idx > 4)
+            {
+                switch (idx)
+                {
+                    case 5:
+                        motor1.SetInverted(!motorInverted1);
+                        break;
+                    case 6:
+                        motor2.SetInverted(!motorInverted2);
+                        break;
+                    case 7:
+                        motor3.SetInverted(!motorInverted3);
+                        break;
+                    case 8:
+                        motor4.SetInverted(!motorInverted4);
+                        break;
+                }
+            }
+
+            // Read motor speeds from gamepad analog stick y-axes.
+            double motorInputLeft = _gamepad.GetAxis(1);
+            double motorInputRight = _gamepad.GetAxis(5);
+            
+            // Run a 5% deadband to eliminate low-end drift.
+            Deadband(ref motorInputLeft);
+            Deadband(ref motorInputRight);
+
+            // Drive motors as pairs according to the left or right analog sticks
+            motor1.Set(ControlMode.PercentOutput, motorInputLeft);
+            motor2.Set(ControlMode.PercentOutput, motorInputLeft);
+            motor3.Set(ControlMode.PercentOutput, motorInputRight);
+            motor4.Set(ControlMode.PercentOutput, motorInputRight);
+        }
+
+        static void GamepadPneumatics()
+        {
+            // Check states of all solenoids
+            bool solenoidState0 = PCM.GetSolenoidOutput(0);
+            bool solenoidState1 = PCM.GetSolenoidOutput(1);
+            bool solenoidState2 = PCM.GetSolenoidOutput(2);
+            bool solenoidState3 = PCM.GetSolenoidOutput(3);
+            bool solenoidState4 = PCM.GetSolenoidOutput(4);
+            bool solenoidState5 = PCM.GetSolenoidOutput(5);
+            bool solenoidState6 = PCM.GetSolenoidOutput(6);
+            bool solenoidState7 = PCM.GetSolenoidOutput(7);
+
+            // Read button press
+            int idx = GetFirstButton(_gamepad);
+
+            // Check if button pressed is within piston-firing range. Otherwise, ignore it.
+            if (idx > 0 && idx < 4)
+            {
+                switch (idx)
+                {
+                    case 1:
+                        PCM.SetSolenoidOutput(0, !solenoidState0);  // Invert the state of solenoid 0
+                        PCM.SetSolenoidOutput(1, solenoidState0);  // Invert the state of solenoid 1
+                        break;
+                    case 2:
+                        PCM.SetSolenoidOutput(2, !solenoidState2);  // Invert the state of solenoid 2
+                        PCM.SetSolenoidOutput(3, solenoidState2);  // Invert the state of solenoid 3
+                        break;
+                    case 3:
+                        PCM.SetSolenoidOutput(4, !solenoidState4);  // Invert the state of solenoid 4
+                        PCM.SetSolenoidOutput(5, solenoidState4);  // Invert the state of solenoid 5
+                        break;
+                    case 4:
+                        PCM.SetSolenoidOutput(6, !solenoidState6);  // Invert the state of solenoid 6
+                        PCM.SetSolenoidOutput(7, solenoidState6);  // Invert the state of solenoid 7
+                        break;
+                }
+            }
+        }
+
+        static void MagicBoxMotors()
         {
             // Set motor directions from their switches. Switches read true if placed in reverse.
             motor1.SetInverted(motorDirection1.Read());
@@ -169,7 +276,7 @@ namespace MagicBox
             motor4.Set(ControlMode.PercentOutput, motorInput4);
         }
 
-        static void Pneumatics()
+        static void MagicBoxPneumatics()
         {
             // Set solenoid 0 to match button, solenoid 1 opposite
             PCM.SetSolenoidOutput(0, pistonFire1.Read());
@@ -183,48 +290,6 @@ namespace MagicBox
             // Set solenoid 6 to match button, solenoid 7 opposite
             PCM.SetSolenoidOutput(6, pistonFire4.Read());
             PCM.SetSolenoidOutput(7, !pistonFire4.Read());
-
-            /*
-            // Check states of all solenoids
-            bool solenoidState0 = PCM.GetSolenoidOutput(0);
-            bool solenoidState1 = PCM.GetSolenoidOutput(1);
-            bool solenoidState2 = PCM.GetSolenoidOutput(2);
-            bool solenoidState3 = PCM.GetSolenoidOutput(3);
-            bool solenoidState4 = PCM.GetSolenoidOutput(4);
-            bool solenoidState5 = PCM.GetSolenoidOutput(5);
-            bool solenoidState6 = PCM.GetSolenoidOutput(6);
-            bool solenoidState7 = PCM.GetSolenoidOutput(7);
-
-
-            // Invert piston 1 state if its toggle button is pressed.
-            // Pistons are fired by solenoids that run as pairs, so 0 and 1 must be inverted.
-            if (pistonToggle1.Read())  // Run if Piston 1 button is pressed.
-            {
-                PCM.SetSolenoidOutput(0, !solenoidState0);  // Invert the state of solenoid 0
-                PCM.SetSolenoidOutput(1, solenoidState0);  // Invert the state of solenoid 1
-            }
-            // Invert piston 2 state if its toggle button is pressed and is not locked.
-            // Pistons are fired by solenoids that run as pairs, so 2 and 3 must be inverted.
-            if (pistonToggle2.Read())  // Run if Piston 2 button is pressed.
-            {
-                PCM.SetSolenoidOutput(2, !solenoidState2);  // Invert the state of solenoid 2
-                PCM.SetSolenoidOutput(3, solenoidState2);  // Invert the state of solenoid 3
-            }
-            // Invert piston 3 state if its toggle button is pressed.
-            // Pistons are fired by solenoids that run as pairs, so 4 and 5 must be inverted.
-            if (pistonToggle3.Read())  // Run if Piston 3 button is pressed.
-            {
-                PCM.SetSolenoidOutput(4, !solenoidState4);  // Invert the state of solenoid 4
-                PCM.SetSolenoidOutput(5, solenoidState4);  // Invert the state of solenoid 5
-            }
-            // Invert piston 4 state if its toggle button is pressed and is not locked.
-            // Pistons are fired by solenoids that run as pairs, so 6 and 7 must be inverted.
-            if (pistonToggle4.Read())  // Run if Piston 4 button is pressed.
-            {
-                PCM.SetSolenoidOutput(6, !solenoidState6);  // Invert the state of solenoid 6
-                PCM.SetSolenoidOutput(7, solenoidState6);  // Invert the state of solenoid 7
-            }
-            */
         }
 
         static void Display()
@@ -240,6 +305,18 @@ namespace MagicBox
             float motorPower2 = motor2.GetMotorOutputPercent();
             float motorPower3 = motor3.GetMotorOutputPercent();
             float motorPower4 = motor4.GetMotorOutputPercent();
+
+            // Reserve locations for motor powers and currents
+            motorLabel1 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            motorLabel2 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            motorLabel3 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            motorLabel4 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+
+            currentLabel1 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            currentLabel2 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            currentLabel3 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+            currentLabel4 = _displayModule.AddLabelSprite(_bigFont, DisplayModule.Color.White, 40, 0, 80, 16);
+
         }
     }
 }
