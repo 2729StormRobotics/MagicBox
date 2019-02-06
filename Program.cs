@@ -200,7 +200,7 @@ namespace MagicBox
             int idx = GetFirstButton(_gamepad);
 
             // Check if button pressed is within piston-firing range. Otherwise, ignore it.
-            if (idx > 0 && idx < 4)
+            if (idx > 0 && idx < 5)
             {
                 switch (idx)
                 {
@@ -231,14 +231,6 @@ namespace MagicBox
             motor2.SetInverted(motorDirection2.Read());
             motor3.SetInverted(motorDirection3.Read());
             motor4.SetInverted(motorDirection4.Read());
-
-            /*
-            // Read motor speeds as percentages from potentiometers.
-            double motorInput1 = motorControl1.Read();
-            double motorInput2 = motorControl2.Read();
-            double motorInput3 = motorControl3.Read();
-            double motorInput4 = motorControl4.Read();
-            */
 
             // Read potentiometers connected to talons as integers from 0 to 1023.
             motor1.GetSensorCollection().GetAnalogIn(out analogInput1);
