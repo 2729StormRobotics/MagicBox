@@ -3,13 +3,12 @@ using System.Threading;
 using Microsoft.SPOT;
 using System.Text;
 
-
 using CTRE.Phoenix;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.MotorControl.CAN;
 
-namespace TempMagicBox
+namespace MagicBoxGamepad
 {
     public class Program
     {
@@ -25,8 +24,6 @@ namespace TempMagicBox
         static TalonSRX motor3 = new TalonSRX(motorPort3);
         static TalonSRX motor4 = new TalonSRX(motorPort4);
 
-        static StringBuilder stringBuilder = new StringBuilder();
-
         static CTRE.Phoenix.Controller.GameController _gamepad = null;
 
         // Assign PCM to its CAN bus port.
@@ -34,41 +31,57 @@ namespace TempMagicBox
 
         public static void Main()
         {
+            PCM.ClearAllPCMStickyFaults();
+
+            PCM.StartCompressor();
+
+            PCM.SetSolenoidOutput(0, true);
+            PCM.SetSolenoidOutput(1, false);
+            PCM.SetSolenoidOutput(2, true);
+            PCM.SetSolenoidOutput(3, false);
+            PCM.SetSolenoidOutput(4, true);
+            PCM.SetSolenoidOutput(5, false);
+            PCM.SetSolenoidOutput(6, true);
+            PCM.SetSolenoidOutput(7, false);
+
             /* loop forever */
             while (true)
             {
                 /* drive robot using gamepad */
                 Drive();
+                
+                /* control pneumatics with gamepad */
                 GamepadPneumatics();
-                /* print whatever is in our string builder */
-                //Debug.Print(stringBuilder.ToString());
-                //stringBuilder.Clear();
+                
                 /* feed watchdog to keep Talon's enabled */
                 CTRE.Phoenix.Watchdog.Feed();
+
                 /* run this task every 20ms */
                 Thread.Sleep(20);
             }
         }
+
         /**
-         * If value is within 10% of center, clear it.
+         * If value is within 5% of center, clear it.
          * @param value [out] floating point value to deadband.
          */
         static void Deadband(ref float value)
         {
-            if (value < -0.10)
+            if (value < -0.05)
             {
                 /* outside of deadband */
             }
-            else if (value > +0.10)
+            else if (value > +0.05)
             {
                 /* outside of deadband */
             }
             else
             {
-                /* within 10% so zero it */
+                /* within 5% so zero it */
                 value = 0;
             }
         }
+
         static void Drive()
         {
             if (null == _gamepad)
@@ -80,11 +93,11 @@ namespace TempMagicBox
             bool motorInverted4 = motor4.GetInverted();
 
             // Read button press
-            //int idx = GetFirstButton(_gamepad);
-            //stringBuilder.AppendLine(idx.ToString());
+
+            int idx = GetFirstButton(_gamepad);
 
             // Check if button pressed is within motor-inverting range. Otherwise, ignore it.
-            /*
+            
             if (idx > 4)
             {
                 switch (idx)
@@ -103,7 +116,7 @@ namespace TempMagicBox
                         break;
                 }
             }
-            */
+            
             // Read motor speeds from gamepad analog stick y-axes.
             float motorInputLeft = -1*_gamepad.GetAxis(1);
             float motorInputRight = -1*_gamepad.GetAxis(5);
@@ -117,8 +130,8 @@ namespace TempMagicBox
             motor2.Set(ControlMode.PercentOutput, motorInputLeft);
             motor3.Set(ControlMode.PercentOutput, motorInputRight);
             motor4.Set(ControlMode.PercentOutput, motorInputRight);
-
         }
+
         static int GetFirstButton(GameController gamepad)
         {
             Thread.Sleep(50);
@@ -129,8 +142,11 @@ namespace TempMagicBox
             }
             return -1;
         }
+
         static void GamepadPneumatics()
         {
+            PCM.ClearAllPCMStickyFaults();
+
             // Check states of all solenoids
             bool solenoidState0 = PCM.GetSolenoidOutput(0);
             bool solenoidState1 = PCM.GetSolenoidOutput(1);
@@ -142,43 +158,31 @@ namespace TempMagicBox
             bool solenoidState7 = PCM.GetSolenoidOutput(7);
 
             // Read button press
-            //int idx = GetFirstButton(_gamepad);
-            //stringBuilder.AppendLine(idx.ToString());
+            int idx = GetFirstButton(_gamepad);
 
             // Check if button pressed is within piston-firing range. Otherwise, ignore it.
-            /*
-            if (idx > 0 && idx < 5)
-            {
-                switch (idx)
-                {
-                    case 1:
-                        PCM.SetSolenoidOutput(0, !solenoidState0);  // Invert the state of solenoid 0
-                        PCM.SetSolenoidOutput(1, solenoidState0);  // Invert the state of solenoid 1
-                        break;
-                    case 2:
-                        PCM.SetSolenoidOutput(2, !solenoidState2);  // Invert the state of solenoid 2
-                        PCM.SetSolenoidOutput(3, solenoidState2);  // Invert the state of solenoid 3
-                        break;
-                    case 3:
-                        PCM.SetSolenoidOutput(4, !solenoidState4);  // Invert the state of solenoid 4
-                        PCM.SetSolenoidOutput(5, solenoidState4);  // Invert the state of solenoid 5
-                        break;
-                    case 4:
-                        PCM.SetSolenoidOutput(6, !solenoidState6);  // Invert the state of solenoid 6
-                        PCM.SetSolenoidOutput(7, solenoidState6);  // Invert the state of solenoid 7
-                        break;
-                }
-            }
-            */
-
-            bool bActivateSolenoid = _gamepad.GetButton(0);
-
-            PCM.SetSolenoidOutput(2, bActivateSolenoid);
-            PCM.SetSolenoidOutput(3, !bActivateSolenoid);
-
-            Debug.Print(solenoidState2.ToString());
-            Debug.Print(solenoidState3.ToString());
             
+            switch (idx)
+			{
+				case 1:
+					PCM.SetSolenoidOutput(0, !solenoidState0);  // Invert the state of solenoid 0
+					PCM.SetSolenoidOutput(1, solenoidState0);  // Invert the state of solenoid 1
+					break;
+				case 2:
+					PCM.SetSolenoidOutput(2, !solenoidState2);  // Invert the state of solenoid 2
+					PCM.SetSolenoidOutput(3, solenoidState2);  // Invert the state of solenoid 3
+					break;
+				case 3:
+					PCM.SetSolenoidOutput(4, !solenoidState4);  // Invert the state of solenoid 4
+					PCM.SetSolenoidOutput(5, solenoidState4);  // Invert the state of solenoid 5
+					break;
+				case 4:
+					PCM.SetSolenoidOutput(6, !solenoidState6);  // Invert the state of solenoid 6
+					PCM.SetSolenoidOutput(7, solenoidState6);  // Invert the state of solenoid 7
+					break;
+                default:
+                    break;
+			}
         }
     }
 }

@@ -1,9 +1,0 @@
-*.cache
-*.dll
-*.pdb
-*.suo
-*.resources
-*.ide
-obj
-bin
-.vs
